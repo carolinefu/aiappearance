@@ -4,9 +4,7 @@ plugins {
 
 android {
     namespace = "com.example.aiappearance"
-    compileSdk {
-        version = release(37)
-    }
+    compileSdk = 37
 
     defaultConfig {
         applicationId = "com.example.aiappearance"
@@ -18,13 +16,23 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildTypes {
-        release {
-            optimization {
-                enable = false
-            }
+    // Required so OpenCV's native binaries load properly on all devices
+    packaging {
+        jniLibs {
+            useLegacyPackaging = true
         }
     }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+        }
+    }
+
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
@@ -39,9 +47,18 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.espresso.core)
     androidTestImplementation(libs.ext.junit)
+
     val camerax_version = "1.3.4"
-    implementation("androidx.camera:camera-core:${camerax_version}")
-    implementation("androidx.camera:camera-camera2:${camerax_version}")
-    implementation("androidx.camera:camera-lifecycle:${camerax_version}")
-    implementation("androidx.camera:camera-view:${camerax_version}")
+
+    // MediaPipe Vision
+    implementation("com.google.mediapipe:tasks-vision:latest.release")
+
+    // Official OpenCV Android SDK
+    implementation("org.opencv:opencv:4.9.0")
+
+    // CameraX dependencies
+    implementation("androidx.camera:camera-core:$camerax_version")
+    implementation("androidx.camera:camera-camera2:$camerax_version")
+    implementation("androidx.camera:camera-lifecycle:$camerax_version")
+    implementation("androidx.camera:camera-view:$camerax_version")
 }
